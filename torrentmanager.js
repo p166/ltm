@@ -1028,7 +1028,7 @@
       timeout: typeof options.timeout === "number" ? options.timeout : 10000,
       headers: getHeaders$1(profileId, options.contentType),
       xhrFields: {
-        withCredentials: true
+        withCredentials: false
       },
       crossDomain: true
     };
