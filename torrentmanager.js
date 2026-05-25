@@ -984,6 +984,16 @@
       proxy: LME_PROXY_URL
     };
   }
+  function getFirstConfiguredProfileId$1() {
+    var ids = Object.keys(QBIT_PROFILE_IDS$1);
+    for (var index = 0; index < ids.length; index++) {
+      var id = ids[index];
+      if (getConfig$1(id).url) {
+        return id;
+      }
+    }
+    return null;
+  }
   function getApiBase$1(profileId) {
     return resolveClientBaseUrl(getConfig$1(profileId), {
       clientName: "qBittorrent"
@@ -1034,6 +1044,7 @@
     _makeRequest = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(profileId, path) {
       var options,
         config,
+        fallbackProfileId,
         _args = arguments,
         _t;
       return _regenerator().w(function (_context) {
@@ -1046,25 +1057,35 @@
             options = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
             profileId = normalizeProfileId$1(profileId);
             config = getConfig$1(profileId);
-            if (config.url) {
+            if (!(!config.url && profileId === DEFAULT_QBIT_PROFILE$1)) {
               _context.n = 1;
               break;
             }
-            throw new Error("qBittorrent URL is not configured");
+            fallbackProfileId = getFirstConfiguredProfileId$1();
+            if (fallbackProfileId && fallbackProfileId !== profileId) {
+              profileId = fallbackProfileId;
+              config = getConfig$1(profileId);
+            }
           case 1:
-            _context.p = 1;
-            _context.n = 2;
-            return ajaxRequest(profileId, path, options);
+            if (config.url) {
+              _context.n = 2;
+              break;
+            }
+            throw new Error("qBittorrent URL is not configured");
           case 2:
-            return _context.a(2, _context.v);
+            _context.p = 2;
+            _context.n = 3;
+            return ajaxRequest(profileId, path, options);
           case 3:
-            _context.p = 3;
+            return _context.a(2, _context.v);
+          case 4:
+            _context.p = 4;
             _t = _context.v;
             throw normalizeError(_t, "qBittorrent request failed");
-          case 4:
+          case 5:
             return _context.a(2);
         }
-      }, _callee, null, [[1, 3]]);
+      }, _callee, null, [[2, 4]]);
     }));
     return _makeRequest.apply(this, arguments);
   }
@@ -1074,6 +1095,7 @@
   function _auth$1() {
     _auth$1 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(profileId, showNotification) {
       var config,
+        fallbackProfileId,
         _args2 = arguments,
         config,
         _t2;
@@ -1083,18 +1105,17 @@
             profileId = normalizeProfileId$1(profileId);
             showNotification = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : true;
             config = getConfig$1(profileId);
-            if (config.url) {
+            if (!(!config.url && profileId === DEFAULT_QBIT_PROFILE$1)) {
               _context2.n = 1;
               break;
             }
-            if (showNotification) {
-              Lampa.Bell.push({
-                text: Lampa.Lang.translate("AuthDenied")
-              });
+            fallbackProfileId = getFirstConfiguredProfileId$1();
+            if (fallbackProfileId && fallbackProfileId !== profileId) {
+              profileId = fallbackProfileId;
+              config = getConfig$1(profileId);
             }
-            throw new Error("qBittorrent URL is not configured");
           case 1:
-            if (config.user && config.pass) {
+            if (config.url) {
               _context2.n = 2;
               break;
             }
@@ -1103,10 +1124,21 @@
                 text: Lampa.Lang.translate("AuthDenied")
               });
             }
-            throw new Error("qBittorrent login or password is not configured");
+            throw new Error("qBittorrent URL is not configured");
           case 2:
-            _context2.p = 2;
-            _context2.n = 3;
+            if (config.user && config.pass) {
+              _context2.n = 3;
+              break;
+            }
+            if (showNotification) {
+              Lampa.Bell.push({
+                text: Lampa.Lang.translate("AuthDenied")
+              });
+            }
+            throw new Error("qBittorrent login or password is not configured");
+          case 3:
+            _context2.p = 3;
+            _context2.n = 4;
             return ajaxRequest(profileId, "/api/v2/auth/login", {
               method: "POST",
               contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -1115,15 +1147,15 @@
                 password: config.pass
               }
             });
-          case 3:
+          case 4:
             if (showNotification) {
               Lampa.Bell.push({
                 text: Lampa.Lang.translate("AuthSuccess")
               });
             }
             return _context2.a(2, true);
-          case 4:
-            _context2.p = 4;
+          case 5:
+            _context2.p = 5;
             _t2 = _context2.v;
             console.log("TDM", "qBittorrent auth error:", _t2);
             if (showNotification) {
@@ -1132,10 +1164,10 @@
               });
             }
             throw normalizeError(_t2, "qBittorrent auth failed");
-          case 5:
+          case 6:
             return _context2.a(2);
         }
-      }, _callee2, null, [[2, 4]]);
+      }, _callee2, null, [[3, 5]]);
     }));
     return _auth$1.apply(this, arguments);
   }
@@ -4595,7 +4627,7 @@
               throw new Error("Unknown client type");
             case 1:
               _context2.n = 2;
-              return executeClientMethod(clientType, "auth", [DEFAULT_QBIT_PROFILE$1], {
+              return executeClientMethod(clientType, "auth", [], {
                 silentAuth: true
               });
             case 2:
@@ -5142,7 +5174,11 @@
             _context2.p = 7;
             _t2 = _context2.v;
             console.error('TDM', 'Error fetching client data:', _t2);
-            throw _t2;
+            return _context2.a(2, {
+              data: [],
+              info: null,
+              error: _t2
+            });
           case 8:
             return _context2.a(2);
         }
