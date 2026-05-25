@@ -1022,8 +1022,12 @@
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     getConfig$1(profileId);
     var method = (options.method || "GET").toUpperCase();
+    if (path === "/api/v2/auth/login") {
+      method = "POST";
+    }
     var settings = {
       url: "".concat(getApiBase$1(profileId)).concat(path),
+      type: method,
       method: method,
       timeout: typeof options.timeout === "number" ? options.timeout : 10000,
       headers: getHeaders$1(profileId, options.contentType),
@@ -1141,7 +1145,6 @@
             _context2.n = 4;
             return ajaxRequest(profileId, "/api/v2/auth/login", {
               method: "POST",
-              contentType: "application/x-www-form-urlencoded; charset=UTF-8",
               data: {
                 username: config.user,
                 password: config.pass
