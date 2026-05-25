@@ -1,5 +1,5 @@
 (function () {
     'use strict';
-    Lampa.Utils.putScriptAsync(['https://cdn.jsdelivr.net/gh/p166/ltm@5dd1627b69259e4ce0c2d4840cb6e8e325b01152/torrentmanager.js'], function () { });
+    Lampa.Utils.putScriptAsync(['https://cdn.jsdelivr.net/gh/p166/ltm@1b885209053e64d365544e94c3d0681269a8eca1/torrentmanager.js'], function () { });
 
 })();
