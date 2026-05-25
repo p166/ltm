@@ -4155,16 +4155,6 @@
       type: "qbittorrent",
       prefix: "lmetorrentqBittorent",
       withCredentials: false
-    },
-    keenetic: {
-      type: "keenetic",
-      prefix: "lmetorrentkeenetic",
-      withCredentials: true
-    },
-    synology: {
-      type: "synology",
-      prefix: "lmetorrentsynology",
-      withCredentials: true
     }
   };
   function buildMetadataClientConfig(clientName) {
