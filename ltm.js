@@ -1,5 +1,5 @@
 (function () {
     'use strict';
-    Lampa.Utils.putScriptAsync(['https://github.com/p166/ltm/blob/main/torrentmanager.js'], function () { });
+    Lampa.Utils.putScriptAsync(['https://raw.githubusercontent.com/p166/ltm/refs/heads/main/torrentmanager.js'], function () { });
 
 })();
