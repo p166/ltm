@@ -5098,6 +5098,21 @@
       var labels = resolveTorrentLabels(activeMovie);
       var dtype = resolveDestinationType(activeMovie);
       e.menu.push({
+        title: "Скопировать магнет",
+        onSelect: function onSelect() {
+          var magnetLink = selectedTorrent.MagnetUri || selectedTorrent.Link;
+          Lampa.Utils.copyTextToClipboard(magnetLink, function () {
+            Lampa.Bell.push({
+              text: Lampa.Lang.translate('copy_secuses')
+            });
+          }, function () {
+            Lampa.Bell.push({
+              text: Lampa.Lang.translate('copy_error')
+            });
+          });
+        }
+      });
+      e.menu.push({
         title: "Отправить в qBittorrent",
         onSelect: function onSelect() {
           Lampa.Select.show({
